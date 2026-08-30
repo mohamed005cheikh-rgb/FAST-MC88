@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FAST — Finger Accuracy Speed Trainer</title>
+<style>
+  /* ============ THEME TOKENS ============ */
+  :root{
+    --bg:#14161a; --surface:#1b1e24; --surface-2:#22262d;
+    --key-bg:#2a2e37; --key-border:#383d47;
+    --text:#e9e7e2; --text-dim:#8b90a0;
+    --accent:#7dd3c0; --accent-2:#f2b880;
+    --correct:#7ee787; --correct-ink:#0e2013;
+    --wrong:#ff6f6f; --wrong-ink:#2a0d0d;
+    --radius:10px;
+    --font-display:'JetBrains Mono','Fira Code',ui-monospace,'SFMono-Regular',Consolas,monospace;
+    --font-body:-apple-system,'Segoe UI',ui-sans-serif,Inter,system-ui,sans-serif;
+    --font-type:'JetBrains Mono','Fira Code',ui-monospace,'SFMono-Regular',Consolas,'Courier New',monospace;
+  }
+  [data-theme="paper"]{
+    --bg:#eef2ee; --surface:#e2e8e2; --surface-2:#d6dfd7;
+    --key-bg:#f7faf7; --key-border:#c4d0c5;
+    --text:#1d2620; --text-dim:#5c6a5f;
+    --accent:#2f7566; --accent-2:#b8792f;
+    --correct:#3f9a55; --correct-ink:#f2fbf4;
+    --wrong:#c94a3f; --wrong-ink:#fdf1ef;
+  }
+  [data-theme="midnight"]{
+    --bg:#0c1220; --surface:#121a2c; --surface-2:#182238;
+    --key-bg:#1c2740; --key-border:#2b3a5c;
+    --text:#e6ebf7; --text-dim:#7f8bab;
+    --accent:#5aa9e6; --accent-2:#e6b455;
+    --correct:#6ee7a8; --correct-ink:#0b1f14;
+    --wrong:#ff7a85; --wrong-ink:#2a0d10;
+  }
+  [data-theme="forest"]{
+    --bg:#0f1610; --surface:#161f17; --surface-2:#1d281e;
+    --key-bg:#212e22; --key-border:#324532;
+    --text:#e6efe3; --text-dim:#8a9c86;
+    --accent:#8bbf78; --accent-2:#d1a441;
+    --correct:#a3e18a; --correct-ink:#132110;
+    --wrong:#e97b6b; --wrong-ink:#2a1310;
+  }
+  [data-theme="amber"]{
+    --bg:#1a140f; --surface:#241c15; --surface-2:#2c221a;
+    --key-bg:#332821; --key-border:#4a382c;
+    --text:#f5ead9; --text-dim:#a8927e;
+    --accent:#e8a33d; --accent-2:#d9707a;
+    --correct:#9fd47c; --correct-ink:#132009;
+    --wrong:#ef6a6a; --wrong-ink:#2a0d0d;
+  }
+
+  *{box-sizing:border-box;}
+  html,body{height:100%;}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:var(--font-body);
+    transition:background .35s ease,color .35s ease;
+    min-height:100vh;
+    background-image:
+      radial-gradient(circle at 15% 8%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 45%),
+      radial-gradient(circle at 85% 92%, color-mix(in srgb, var(--accent-2) 8%, transparent), transparent 45%);
+    background-attachment:fixed;
+  }
+  ::selection{ background:var(--accent); color:var(--bg); }
+  button{ font-family:inherit; cursor:pointer; }
+  .hidden{ display:none !important; }
+
+  /* ============ LAYOUT SHELL ============ */
+  .app{ max-width:920px; margin:0 auto; padding:28px 22px 60px; }
+  header.topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:6px 2px 26px; border-bottom:1px solid var(--key-border);
+    margin-bottom:26px;
+  }
+  .logo{
+    font-family:var(--font-display); font-weight:700; font-size:1.35rem;
+    letter-spacing:.04em; display:flex; align-items:baseline; gap:10px; cursor:pointer;
+    background:none; border:none; color:var(--text);
+  }
+  .logo span{ color:var(--accent); }
+  .logo small{ font-family:var(--font-body); font-weight:400; font-size:.62rem; color:var(--text-dim); letter-spacing:.08em; text-transform:uppercase; }
+  .theme-row{ display:flex; gap:8px; align-items:center; }
+  .swatch{
+    width:22px; height:22px; border-radius:50%; border:2px solid var(--key-border);
+    padding:0; background:var(--sw-bg); position:relative;
+  }
+  .swatch.active{ outline:2px solid var(--accent); outline-offset:2px; }
+
+  /* ============ HERO / LANDING ============ */
+  .hero{ padding:30px 0 10px; }
+  .hero h1{
+    font-family:var(--font-display); font-size:clamp(2.2rem,6vw,3.4rem);
+    line-height:1.05; margin:0 0 14px; letter-spacing:-.01em;
+  }
+  .hero h1 .cursor{ display:inline-block; width:.5ch; background:var(--accent); animation:blink 1s steps(1) infinite; margin-left:4px; }
+  @keyframes blink{ 50%{ opacity:0; } }
+  .hero p.lede{ color:var(--text-dim); font-size:1.05rem; max-width:56ch; line-height:1.6; margin:0 0 30px; }
+
+  .method{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin:0 0 34px;
+  }
+  .method .card{
+    background:var(--surface); border:1px solid var(--key-border); border-radius:var(--radius);
+    padding:16px 16px 18px;
+  }
+  .method .card .num{ font-family:var(--font-display); color:var(--accent); font-size:.75rem; letter-spacing:.1em; }
+  .method .card h3{ margin:8px 0 6px; font-size:.98rem; }
+  .method .card p{ margin:0; color:var(--text-dim); font-size:.85rem; line-height:1.5; }
+
+  .start-row{ display:flex; gap:14px; align-items:center; flex-wrap:wrap; }
+  .btn{
+    border:1px solid var(--key-border); background:var(--surface-2); color:var(--text);
+    padding:12px 22px; border-radius:8px; font-size:.95rem; font-weight:600;
+    transition:transform .15s ease, border-color .15s ease, background .15s ease;
+  }
+  .btn:hover{ border-color:var(--accent); transform:translateY(-1px); }
+  .btn.primary{ background:var(--accent); color:var(--bg); border-color:var(--accent); }
+  .btn.primary:hover{ filter:brightness(1.08); }
+  .btn.ghost{ background:transparent; }
+  .btn:disabled{ opacity:.45; cursor:not-allowed; transform:none; }
+  .btn small{ display:block; font-weight:400; font-size:.7rem; color:inherit; opacity:.75; margin-top:2px; }
+
+  .desktop-flag{
+    margin-top:26px; font-size:.8rem; color:var(--text-dim);
+    display:flex; gap:8px; align-items:center;
+  }
+  .desktop-flag .dot{ width:7px; height:7px; border-radius:50%; background:var(--accent); }
+
+  /* ============ CUSTOM TEXT PANEL ============ */
+  .panel{
+    background:var(--surface); border:1px solid var(--key-border); border-radius:var(--radius);
+    padding:18px 20px; margin-top:18px;
+  }
+  .panel h4{ margin:0 0 10px; font-size:.85rem; text-transform:uppercase; letter-spacing:.08em; color:var(--text-dim); }
+  .panel textarea{
+    width:100%; min-height:90px; resize:vertical; background:var(--surface-2);
+    border:1px solid var(--key-border); border-radius:8px; color:var(--text);
+    font-family:var(--font-type); font-size:.92rem; padding:12px; line-height:1.5;
+  }
+  .panel .row{ display:flex; gap:10px; margin-top:10px; flex-wrap:wrap; }
+  .saved-texts{ display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+  .chip{
+    border:1px solid var(--key-border); background:var(--surface-2); color:var(--text-dim);
+    padding:6px 12px; border-radius:20px; font-size:.78rem;
+  }
+  .chip:hover{ color:var(--text); border-color:var(--accent); }
+
+  /* ============ PRACTICE SCREEN ============ */
+  .stat-bar{
+    display:flex; justify-content:space-between; align-items:center;
+    background:var(--surface); border:1px solid var(--key-border); border-radius:var(--radius);
+    padding:14px 20px; margin-bottom:22px; flex-wrap:wrap; gap:12px;
+  }
+  .stat{ text-align:center; min-width:64px; }
+  .stat .v{ font-family:var(--font-display); font-size:1.3rem; font-weight:700; }
+  .stat .l{ font-size:.65rem; color:var(--text-dim); text-transform:uppercase; letter-spacing:.08em; }
+  .stat.target .v{ color:var(--accent-2); }
+
+  .type-stage{
+    background:var(--surface); border:1px solid var(--key-border); border-radius:var(--radius);
+    padding:28px 26px; min-height:220px;
+  }
+  .type-text{
+    font-family:var(--font-type); font-size:1.28rem; line-height:2.35; letter-spacing:.01em;
+  }
+  .word{ display:inline-block; white-space:nowrap; }
+  .ch{
+    display:inline-block; padding:2px 1px; border-radius:4px; color:var(--text-dim);
+    transition:background .1s ease, color .1s ease; position:relative;
+  }
+  .ch.correct{ background:color-mix(in srgb, var(--correct) 30%, transparent); color:var(--correct); }
+  .ch.wrong{ background:var(--wrong); color:var(--wrong-ink); }
+  .ch.skipped{ background:color-mix(in srgb, var(--wrong) 35%, transparent); color:var(--wrong); text-decoration:underline wavy; }
+  .ch.current{ box-shadow: inset 0 -3px 0 var(--accent); }
+  .ch.current::before{
+    content:''; position:absolute; left:-1px; top:0; bottom:0; width:2px; background:var(--accent);
+    animation:blink .9s steps(1) infinite;
+  }
+  .ch.space{ min-width:.6ch; }
+
+  .stage-footer{
+    display:flex; justify-content:space-between; align-items:center; margin-top:22px;
+    gap:12px; flex-wrap:wrap;
+  }
+  .hint{ font-size:.78rem; color:var(--text-dim); }
+  .hint kbd{
+    background:var(--key-bg); border:1px solid var(--key-border); border-bottom-width:2px;
+    padding:1px 7px; border-radius:5px; font-family:var(--font-display); font-size:.72rem;
+  }
+
+  /* ============ REPORT ============ */
+  .report{ padding-top:6px; }
+  .report h2{ font-family:var(--font-display); font-size:1.6rem; margin:0 0 4px; }
+  .report .sub{ color:var(--text-dim); margin:0 0 26px; font-size:.92rem; }
+  .grid-stats{
+    display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:12px;
+    margin-bottom:26px;
+  }
+  .grid-stats .cell{
+    background:var(--surface); border:1px solid var(--key-border); border-radius:var(--radius);
+    padding:16px 18px;
+  }
+  .grid-stats .cell .big{ font-family:var(--font-display); font-size:1.7rem; font-weight:700; }
+  .grid-stats .cell .lab{ color:var(--text-dim); font-size:.72rem; text-transform:uppercase; letter-spacing:.07em; margin-top:2px;}
+  .bar-row{ margin-bottom:12px; }
+  .bar-row .bl{ display:flex; justify-content:space-between; font-size:.78rem; color:var(--text-dim); margin-bottom:5px; }
+  .bar-track{ height:8px; border-radius:6px; background:var(--surface-2); overflow:hidden; }
+  .bar-fill{ height:100%; background:var(--accent); border-radius:6px; transition:width .5s ease; }
+  .bar-fill.warn{ background:var(--wrong); }
+
+  .challenge-box{
+    background:var(--surface); border:1px solid var(--key-border); border-radius:var(--radius);
+    padding:20px 22px; margin-top:22px;
+  }
+  .challenge-box h4{ margin:0 0 4px; font-size:.95rem; }
+  .challenge-box p{ margin:0 0 14px; color:var(--text-dim); font-size:.85rem; }
+  .margin-opts{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+  .margin-opts input[type=number]{
+    width:70px; background:var(--surface-2); border:1px solid var(--key-border); border-radius:6px;
+    color:var(--text); padding:9px 10px; font-family:var(--font-display);
+  }
+  .verdict{
+    margin-top:16px; padding:14px 16px; border-radius:8px; font-size:.9rem; display:none;
+  }
+  .verdict.success{ display:block; background:color-mix(in srgb, var(--correct) 18%, transparent); color:var(--correct); }
+  .verdict.fail{ display:block; background:color-mix(in srgb, var(--wrong) 15%, transparent); color:var(--wrong); }
+
+  footer.foot{
+    margin-top:50px; padding-top:20px; border-top:1px solid var(--key-border);
+    color:var(--text-dim); font-size:.74rem; display:flex; justify-content:space-between;
+    flex-wrap:wrap; gap:8px;
+  }
+
+  .desktop-only-notice{
+    display:none; position:fixed; inset:0; background:var(--bg); z-index:50;
+    align-items:center; justify-content:center; text-align:center; padding:30px;
+  }
+  .desktop-only-notice .box{ max-width:360px; }
+  .desktop-only-notice h3{ font-family:var(--font-display); margin-bottom:10px; }
+  .desktop-only-notice p{ color:var(--text-dim); font-size:.9rem; line-height:1.5; }
+  @media (max-width:760px){
+    .desktop-only-notice{ display:flex; }
+    .method{ grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body data-theme="graphite">
+
+<div class="desktop-only-notice"><div class="box">
+  <h3>⌨ Grab a keyboard</h3>
+  <p>FAST is built for PC keyboards and precise 2–4 finger technique. Open this page on a desktop or laptop to start training.</p>
+</div></div>
+
+<div class="app">
+
+  <header class="topbar">
+    <button class="logo" id="logoBtn" title="Back to start">F<span>A</span>ST<small>Finger&nbsp;Accuracy&nbsp;Speed&nbsp;Trainer</small></button>
+    <div class="theme-row" id="themeRow"></div>
+  </header>
+
+  <!-- ============ SCREEN: HOME ============ -->
+  <section id="screen-home">
+    <div class="hero">
+      <h1>Type with the fingers<br>you actually use<span class="cursor">&nbsp;</span></h1>
+      <p class="lede">Most typing tutors assume ten fingers on home row. FAST is built for the two-to-four-finger method — rewrite short essays, race the clock, and watch your own record fall.</p>
+
+      <div class="method">
+        <div class="card">
+          <div class="num">01 — HOW IT WORKS</div>
+          <h3>Rewrite a passage</h3>
+          <p>Retype the essay below exactly. Correct keys glow, mistakes flare red — fix them or skip past with Tab.</p>
+        </div>
+        <div class="card">
+          <div class="num">02 — YOUR TIME</div>
+          <h3>Get a full report</h3>
+          <p>WPM, accuracy, corrected vs. skipped mistakes — a clean breakdown the moment you finish.</p>
+        </div>
+        <div class="card">
+          <div class="num">03 — THE CHALLENGE</div>
+          <h3>Beat your own clock</h3>
+          <p>Rewrite the same text again against a tighter time. Miss it, and FAST lets you dial the target back in.</p>
+        </div>
+      </div>
+
+      <div class="start-row">
+        <button class="btn primary" id="startDefaultBtn">Start with the climate essay<small>~150 words · built in</small></button>
+        <button class="btn ghost" id="useOwnBtn">Use my own text</button>
+      </div>
+
+      <div class="panel hidden" id="ownTextPanel">
+        <h4>Paste text to practice</h4>
+        <textarea id="ownTextArea" placeholder="Paste or type any passage here — an email, an article, a paragraph you keep getting wrong…"></textarea>
+        <div class="row">
+          <button class="btn primary" id="startOwnBtn">Start typing this</button>
+          <button class="btn ghost" id="saveOwnBtn">Save for later</button>
+        </div>
+        <div class="saved-texts" id="savedTexts"></div>
+      </div>
+
+      <div class="desktop-flag"><span class="dot"></span> Works fully offline once loaded — nothing leaves your browser.</div>
+    </div>
+  </section>
+
+  <!-- ============ SCREEN: PRACTICE ============ -->
+  <section id="screen-practice" class="hidden">
+    <div class="stat-bar">
+      <div class="stat"><div class="v" id="statTime">0.0s</div><div class="l">Time</div></div>
+      <div class="stat"><div class="v" id="statWpm">0</div><div class="l">WPM (live)</div></div>
+      <div class="stat"><div class="v" id="statAcc">100%</div><div class="l">Accuracy</div></div>
+      <div class="stat"><div class="v" id="statErr">0</div><div class="l">Mistakes</div></div>
+      <div class="stat target hidden" id="statTargetWrap"><div class="v" id="statTarget">—</div><div class="l">Goal</div></div>
+    </div>
+    <div class="type-stage">
+      <div class="type-text" id="typeText"></div>
+    </div>
+    <div class="stage-footer">
+      <div class="hint">Wrong key? <kbd>Backspace</kbd> to fix, <kbd>Tab</kbd> to skip past it.</div>
+      <button class="btn ghost" id="restartBtn">Restart this text</button>
+    </div>
+  </section>
+
+  <!-- ============ SCREEN: REPORT ============ -->
+  <section id="screen-report" class="hidden">
+    <div class="report">
+      <h2>Session report</h2>
+      <p class="sub" id="reportSub">Here's how that pass went.</p>
+
+      <div class="grid-stats">
+        <div class="cell"><div class="big" id="repTime">—</div><div class="lab">Total time</div></div>
+        <div class="cell"><div class="big" id="repWpm">—</div><div class="lab">Words per minute</div></div>
+        <div class="cell"><div class="big" id="repAcc">—</div><div class="lab">Clean accuracy</div></div>
+        <div class="cell"><div class="big" id="repRaw">—</div><div class="lab">Raw keystroke accuracy</div></div>
+      </div>
+
+      <div class="bar-row">
+        <div class="bl"><span>Corrected mistakes</span><span id="repCorrected">0</span></div>
+        <div class="bar-track"><div class="bar-fill" id="barCorrected" style="width:0%"></div></div>
+      </div>
+      <div class="bar-row">
+        <div class="bl"><span>Skipped (uncorrected) characters</span><span id="repSkipped">0</span></div>
+        <div class="bar-track"><div class="bar-fill warn" id="barSkipped" style="width:0%"></div></div>
+      </div>
+
+      <div class="challenge-box">
+        <h4>Rewrite it faster</h4>
+        <p>Pick a margin — FAST will set your next target that much quicker than this run.</p>
+        <div class="margin-opts">
+          <button class="btn" data-margin="10">−10s</button>
+          <button class="btn" data-margin="20">−20s</button>
+          <span style="color:var(--text-dim); font-size:.85rem;">or custom:</span>
+          <input type="number" id="customMargin" min="1" placeholder="sec">
+          <button class="btn" id="customMarginBtn">Set</button>
+          <button class="btn primary" id="retryBtn" style="margin-left:auto;">Retry same text</button>
+        </div>
+        <div class="verdict" id="verdictBox"></div>
+      </div>
+
+      <div class="start-row" style="margin-top:22px;">
+        <button class="btn ghost" id="backHomeBtn">Choose a different text</button>
+      </div>
+    </div>
+  </section>
+
+  <footer class="foot">
+    <span>© mohamed005cheikh@gmail.com — by MC88</span>
+    <span id="footStatus">Local session — nothing is uploaded</span>
+  </footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ---------- DEFAULT TEXT ---------- */
+  const DEFAULT_TEXT = "The climate is changing faster than at any point in recent human history. Glaciers are retreating, sea levels are rising, and weather patterns that once felt predictable now swing between drought and flood. Scientists trace most of this shift to rising levels of carbon dioxide and other gases that trap heat in the atmosphere. The causes are mostly human: burning coal and oil, clearing forests, and running factories that release gases faster than the planet can absorb them. The good news is that solutions already exist. Solar and wind power are now cheaper than many fossil fuels. Electric vehicles are improving every year, and cities are redesigning streets to favor bikes and trains over cars. Small choices still matter, but the biggest gains will come from policy, investment, and technology working together at a global scale.";
+
+  /* ---------- STATE ---------- */
+  let currentText = "";
+  let chars = [];        // {ch, status}
+  let curIndex = 0;
+  let startTime = null;
+  let endTime = null;
+  let timerHandle = null;
+  let totalMistakes = 0;     // every wrong keystroke, even if later fixed
+  let skippedCount = 0;      // chars forced past with Tab
+  let lastSessionTime = null;
+  let targetSeconds = null;
+
+  const $ = (id)=>document.getElementById(id);
+
+  /* ---------- THEME ---------- */
+  const THEMES = [
+    {id:'graphite', label:'Graphite', bg:'#14161a'},
+    {id:'paper',    label:'Paper',    bg:'#eef2ee'},
+    {id:'midnight', label:'Midnight', bg:'#0c1220'},
+    {id:'forest',   label:'Forest',   bg:'#0f1610'},
+    {id:'amber',    label:'Amber',    bg:'#1a140f'}
+  ];
+  function buildThemeRow(){
+    const row = $('themeRow');
+    row.innerHTML = '';
+    THEMES.forEach(t=>{
+      const b = document.createElement('button');
+      b.className = 'swatch';
+      b.style.setProperty('--sw-bg', t.bg);
+      b.title = t.label;
+      b.addEventListener('click', ()=> setTheme(t.id));
+      row.appendChild(b);
+    });
+    highlightTheme();
+  }
+  function highlightTheme(){
+    const active = document.body.getAttribute('data-theme');
+    [...document.querySelectorAll('.swatch')].forEach((el,i)=>{
+      el.classList.toggle('active', THEMES[i].id === active);
+    });
+  }
+  function setTheme(id){
+    document.body.setAttribute('data-theme', id);
+    localStorage.setItem('fast_theme', id);
+    highlightTheme();
+  }
+  (function initTheme(){
+    const saved = localStorage.getItem('fast_theme');
+    if(saved) document.body.setAttribute('data-theme', saved);
+    buildThemeRow();
+  })();
+
+  /* ---------- SAVED TEXTS ---------- */
+  function getSavedTexts(){
+    try{ return JSON.parse(localStorage.getItem('fast_texts')||'[]'); }catch(e){ return []; }
+  }
+  function renderSavedTexts(){
+    const wrap = $('savedTexts');
+    wrap.innerHTML = '';
+    getSavedTexts().forEach((t,i)=>{
+      const chip = document.createElement('button');
+      chip.className = 'chip';
+      chip.textContent = (t.slice(0,28) + (t.length>28?'…':''));
+      chip.addEventListener('click', ()=> beginPractice(t));
+      wrap.appendChild(chip);
+    });
+  }
+
+  /* ---------- SCREEN SWITCHING ---------- */
+  function show(id){
+    ['screen-home','screen-practice','screen-report'].forEach(s=>{
+      $(s).classList.toggle('hidden', s!==id);
+    });
+  }
+
+  $('logoBtn').addEventListener('click', ()=> show('screen-home'));
+  $('backHomeBtn').addEventListener('click', ()=> show('screen-home'));
+
+  $('useOwnBtn').addEventListener('click', ()=>{
+    $('ownTextPanel').classList.toggle('hidden');
+    renderSavedTexts();
+  });
+  $('startDefaultBtn').addEventListener('click', ()=> beginPractice(DEFAULT_TEXT));
+  $('startOwnBtn').addEventListener('click', ()=>{
+    const v = $('ownTextArea').value.trim();
+    if(v.length < 10){ $('ownTextArea').focus(); return; }
+    beginPractice(v);
+  });
+  $('saveOwnBtn').addEventListener('click', ()=>{
+    const v = $('ownTextArea').value.trim();
+    if(v.length < 10) return;
+    const list = getSavedTexts();
+    list.unshift(v);
+    localStorage.setItem('fast_texts', JSON.stringify(list.slice(0,12)));
+    renderSavedTexts();
+  });
+
+  /* ---------- PRACTICE ENGINE ---------- */
+  function beginPractice(text, target){
+    currentText = text;
+    targetSeconds = target || null;
+    chars = [...text].map(ch=>({ch, status:'pending'}));
+    curIndex = 0;
+    startTime = null; endTime = null;
+    totalMistakes = 0; skippedCount = 0;
+    clearInterval(timerHandle);
+
+    renderTypeText();
+    $('statTargetWrap').classList.toggle('hidden', !targetSeconds);
+    if(targetSeconds) $('statTarget').textContent = targetSeconds.toFixed(0)+'s';
+    updateStats();
+    show('screen-practice');
+    document.addEventListener('keydown', onKeyDown);
+  }
+
+  $('restartBtn').addEventListener('click', ()=> beginPractice(currentText, targetSeconds));
+
+  function renderTypeText(){
+    const stage = $('typeText');
+    stage.innerHTML = '';
+    let wordSpan = null;
+    chars.forEach((c,i)=>{
+      const span = document.createElement('span');
+      span.className = 'ch';
+      span.dataset.i = i;
+      span.textContent = c.ch === ' ' ? '\u00B7' : c.ch;
+      if(c.ch === ' '){
+        span.classList.add('space');
+        stage.appendChild(span);
+        wordSpan = null;
+      } else if(c.ch === '\n'){
+        stage.appendChild(document.createElement('br'));
+        wordSpan = null;
+      } else {
+        if(!wordSpan){ wordSpan = document.createElement('span'); wordSpan.className='word'; stage.appendChild(wordSpan); }
+        wordSpan.appendChild(span);
+      }
+    });
+    paintAll();
+  }
+
+  function paintAll(){
+    const spans = document.querySelectorAll('#typeText .ch');
+    spans.forEach((el,i)=>{
+      el.classList.remove('correct','wrong','skipped','current');
+      const st = chars[i].status;
+      if(st==='correct') el.classList.add('correct');
+      else if(st==='wrong') el.classList.add('wrong');
+      else if(st==='skipped') el.classList.add('skipped');
+      if(i===curIndex) el.classList.add('current');
+    });
+    const cur = document.querySelector('#typeText .ch.current');
+    if(cur) cur.scrollIntoView({block:'nearest'});
+  }
+
+  function onKeyDown(e){
+    if(curIndex >= chars.length) return;
+    if(e.key === 'Backspace'){
+      e.preventDefault();
+      if(curIndex > 0){
+        curIndex--;
+        chars[curIndex].status = 'pending';
+        paintAll(); updateStats();
+      }
+      return;
+    }
+    if(e.key === 'Tab'){
+      e.preventDefault();
+      if(startTime===null) startTimer();
+      chars[curIndex].status = 'skipped';
+      skippedCount++;
+      curIndex++;
+      afterAdvance();
+      return;
+    }
+    if(e.key.length !== 1) return; // ignore Shift, Ctrl, arrows, etc.
+    e.preventDefault();
+    if(startTime===null) startTimer();
+
+    const expected = chars[curIndex].ch;
+    if(e.key === expected){
+      chars[curIndex].status = 'correct';
+      curIndex++;
+    } else {
+      chars[curIndex].status = 'wrong';
+      totalMistakes++;
+    }
+    afterAdvance();
+  }
+
+  function afterAdvance(){
+    paintAll();
+    updateStats();
+    if(curIndex >= chars.length){
+      finishSession();
+    }
+  }
+
+  function startTimer(){
+    startTime = performance.now();
+    timerHandle = setInterval(updateStats, 100);
+  }
+
+  function updateStats(){
+    const elapsed = startTime ? (performance.now()-startTime)/1000 : 0;
+    $('statTime').textContent = elapsed.toFixed(1)+'s';
+    const correctCount = chars.filter(c=>c.status==='correct').length;
+    const wpm = elapsed>0 ? Math.round((correctCount/5)/(elapsed/60)) : 0;
+    $('statWpm').textContent = wpm;
+    const attempts = correctCount + totalMistakes;
+    const acc = attempts>0 ? Math.round((correctCount/attempts)*100) : 100;
+    $('statAcc').textContent = acc+'%';
+    $('statErr').textContent = totalMistakes;
+  }
+
+  function finishSession(){
+    clearInterval(timerHandle);
+    endTime = performance.now();
+    document.removeEventListener('keydown', onKeyDown);
+    const elapsed = (endTime-startTime)/1000;
+    lastSessionTime = elapsed;
+
+    const totalChars = chars.length;
+    const correctFinal = chars.filter(c=>c.status==='correct').length;
+    const correctedMistakes = Math.max(0, totalMistakes - skippedCount);
+    const cleanAcc = Math.round((correctFinal/totalChars)*100);
+    const rawAttempts = correctFinal + totalMistakes;
+    const rawAcc = rawAttempts>0 ? Math.round((correctFinal/rawAttempts)*100) : 100;
+    const wpm = Math.round((totalChars/5)/(elapsed/60));
+
+    $('reportSub').textContent = targetSeconds
+      ? `Goal was ${targetSeconds.toFixed(0)}s — you finished in ${elapsed.toFixed(1)}s.`
+      : `You finished ${totalChars} characters in ${elapsed.toFixed(1)}s.`;
+    $('repTime').textContent = elapsed.toFixed(1)+'s';
+    $('repWpm').textContent = wpm;
+    $('repAcc').textContent = cleanAcc+'%';
+    $('repRaw').textContent = rawAcc+'%';
+    $('repCorrected').textContent = correctedMistakes;
+    $('repSkipped').textContent = skippedCount;
+    $('barCorrected').style.width = Math.min(100,(correctedMistakes/Math.max(1,totalChars))*400)+'%';
+    $('barSkipped').style.width = Math.min(100,(skippedCount/Math.max(1,totalChars))*400)+'%';
+
+    const verdict = $('verdictBox');
+    verdict.className = 'verdict';
+    if(targetSeconds){
+      if(elapsed <= targetSeconds){
+        verdict.classList.add('success');
+        verdict.textContent = `Beat it! You came in ${(targetSeconds-elapsed).toFixed(1)}s under your goal.`;
+      } else {
+        verdict.classList.add('fail');
+        verdict.textContent = `Missed the goal by ${(elapsed-targetSeconds).toFixed(1)}s. Want to loosen the timer and try again?`;
+      }
+    } else {
+      verdict.textContent = '';
+    }
+
+    saveHistory({time:elapsed, wpm, acc:cleanAcc, textLen:totalChars, date:Date.now()});
+    show('screen-report');
+  }
+
+  /* ---------- CHALLENGE CONTROLS ---------- */
+  document.querySelectorAll('.margin-opts [data-margin]').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const margin = parseFloat(btn.dataset.margin);
+      const t = Math.max(5, (lastSessionTime||30) - margin);
+      $('customMargin').value = '';
+      startChallenge(t);
+    });
+  });
+  $('customMarginBtn').addEventListener('click', ()=>{
+    const m = parseFloat($('customMargin').value);
+    if(!m || m<=0) return;
+    const t = Math.max(5, (lastSessionTime||30) - m);
+    startChallenge(t);
+  });
+  function startChallenge(t){
+    beginPractice(currentText, t);
+  }
+  $('retryBtn').addEventListener('click', ()=> beginPractice(currentText, targetSeconds));
+
+  /* ---------- HISTORY ---------- */
+  function saveHistory(entry){
+    try{
+      const h = JSON.parse(localStorage.getItem('fast_history')||'[]');
+      h.unshift(entry);
+      localStorage.setItem('fast_history', JSON.stringify(h.slice(0,50)));
+    }catch(e){}
+  }
+
+})();
+</script>
+</body>
+</html>
