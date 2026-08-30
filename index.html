@@ -7,45 +7,47 @@
 <style>
   /* ============ THEME TOKENS ============ */
   :root{
-    --bg:#14161a; --surface:#1b1e24; --surface-2:#22262d;
-    --key-bg:#2a2e37; --key-border:#383d47;
-    --text:#e9e7e2; --text-dim:#8b90a0;
-    --accent:#7dd3c0; --accent-2:#f2b880;
+    --bg:#12141a; --surface:#191c23; --surface-2:#20242c;
+    --key-bg:#262a33; --key-border:#343946;
+    --text:#eceaf3; --text-dim:#8b8fa3;
+    --accent:#8b8cf9; --accent-2:#f2966f;
     --correct:#7ee787; --correct-ink:#0e2013;
     --wrong:#ff6f6f; --wrong-ink:#2a0d0d;
-    --radius:10px;
-    --font-display:'JetBrains Mono','Fira Code',ui-monospace,'SFMono-Regular',Consolas,monospace;
-    --font-body:-apple-system,'Segoe UI',ui-sans-serif,Inter,system-ui,sans-serif;
-    --font-type:'JetBrains Mono','Fira Code',ui-monospace,'SFMono-Regular',Consolas,'Courier New',monospace;
+    --radius:12px;
+    --shadow:0 1px 0 rgba(255,255,255,.04) inset, 0 10px 26px -16px rgba(0,0,0,.65);
+    --font-display:'JetBrains Mono','IBM Plex Mono','Cascadia Code','Fira Code',ui-monospace,'SFMono-Regular',Consolas,monospace;
+    --font-body:'Inter',-apple-system,'Segoe UI',ui-sans-serif,system-ui,sans-serif;
+    --font-type:'JetBrains Mono','Cascadia Code','Fira Code',ui-monospace,'SFMono-Regular',Consolas,'Courier New',monospace;
   }
   [data-theme="paper"]{
-    --bg:#eef2ee; --surface:#e2e8e2; --surface-2:#d6dfd7;
-    --key-bg:#f7faf7; --key-border:#c4d0c5;
-    --text:#1d2620; --text-dim:#5c6a5f;
-    --accent:#2f7566; --accent-2:#b8792f;
+    --bg:#eef1ee; --surface:#e2e7e2; --surface-2:#d5dcd5;
+    --key-bg:#f6f9f6; --key-border:#c3cec4;
+    --text:#20261f; --text-dim:#5b6a5b;
+    --accent:#6b4a7a; --accent-2:#c98a2e;
     --correct:#3f9a55; --correct-ink:#f2fbf4;
-    --wrong:#c94a3f; --wrong-ink:#fdf1ef;
+    --wrong:#c9463d; --wrong-ink:#fdf1ef;
+    --shadow:0 1px 0 rgba(255,255,255,.5) inset, 0 10px 22px -16px rgba(30,40,30,.25);
   }
   [data-theme="midnight"]{
-    --bg:#0c1220; --surface:#121a2c; --surface-2:#182238;
-    --key-bg:#1c2740; --key-border:#2b3a5c;
-    --text:#e6ebf7; --text-dim:#7f8bab;
-    --accent:#5aa9e6; --accent-2:#e6b455;
+    --bg:#0b101c; --surface:#111827; --surface-2:#161f33;
+    --key-bg:#1a2440; --key-border:#293458;
+    --text:#e7ecfa; --text-dim:#7d87ab;
+    --accent:#5aa9e6; --accent-2:#e8bd5a;
     --correct:#6ee7a8; --correct-ink:#0b1f14;
     --wrong:#ff7a85; --wrong-ink:#2a0d10;
   }
   [data-theme="forest"]{
-    --bg:#0f1610; --surface:#161f17; --surface-2:#1d281e;
-    --key-bg:#212e22; --key-border:#324532;
-    --text:#e6efe3; --text-dim:#8a9c86;
-    --accent:#8bbf78; --accent-2:#d1a441;
+    --bg:#0e1510; --surface:#151f18; --surface-2:#1b281f;
+    --key-bg:#20301f; --key-border:#324532;
+    --text:#e7efe4; --text-dim:#89a086;
+    --accent:#8fc9a5; --accent-2:#d98a52;
     --correct:#a3e18a; --correct-ink:#132110;
     --wrong:#e97b6b; --wrong-ink:#2a1310;
   }
-  [data-theme="amber"]{
-    --bg:#1a140f; --surface:#241c15; --surface-2:#2c221a;
-    --key-bg:#332821; --key-border:#4a382c;
-    --text:#f5ead9; --text-dim:#a8927e;
+  [data-theme="ember"]{
+    --bg:#180f0c; --surface:#221512; --surface-2:#2a1a16;
+    --key-bg:#33201a; --key-border:#4a2f26;
+    --text:#f7e9de; --text-dim:#ab8b78;
     --accent:#e8a33d; --accent-2:#d9707a;
     --correct:#9fd47c; --correct-ink:#132009;
     --wrong:#ef6a6a; --wrong-ink:#2a0d0d;
@@ -59,8 +61,8 @@
     transition:background .35s ease,color .35s ease;
     min-height:100vh;
     background-image:
-      radial-gradient(circle at 15% 8%, color-mix(in srgb, var(--accent) 10%, transparent), transparent 45%),
-      radial-gradient(circle at 85% 92%, color-mix(in srgb, var(--accent-2) 8%, transparent), transparent 45%);
+      radial-gradient(circle at 12% 6%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 42%),
+      radial-gradient(circle at 88% 94%, color-mix(in srgb, var(--accent-2) 9%, transparent), transparent 42%);
     background-attachment:fixed;
   }
   ::selection{ background:var(--accent); color:var(--bg); }
@@ -72,7 +74,7 @@
   header.topbar{
     display:flex; align-items:center; justify-content:space-between;
     padding:6px 2px 26px; border-bottom:1px solid var(--key-border);
-    margin-bottom:26px;
+    margin-bottom:26px; gap:14px; flex-wrap:wrap;
   }
   .logo{
     font-family:var(--font-display); font-weight:700; font-size:1.35rem;
@@ -81,6 +83,12 @@
   }
   .logo span{ color:var(--accent); }
   .logo small{ font-family:var(--font-body); font-weight:400; font-size:.62rem; color:var(--text-dim); letter-spacing:.08em; text-transform:uppercase; }
+  .nav-right{ display:flex; align-items:center; gap:16px; }
+  .nav-link{
+    background:none; border:none; color:var(--text-dim); font-size:.82rem; font-weight:600;
+    letter-spacing:.02em; padding:4px 2px; border-bottom:2px solid transparent;
+  }
+  .nav-link:hover{ color:var(--text); border-color:var(--accent); }
   .theme-row{ display:flex; gap:8px; align-items:center; }
   .swatch{
     width:22px; height:22px; border-radius:50%; border:2px solid var(--key-border);
@@ -103,7 +111,7 @@
   }
   .method .card{
     background:var(--surface); border:1px solid var(--key-border); border-radius:var(--radius);
-    padding:16px 16px 18px;
+    padding:16px 16px 18px; box-shadow:var(--shadow);
   }
   .method .card .num{ font-family:var(--font-display); color:var(--accent); font-size:.75rem; letter-spacing:.1em; }
   .method .card h3{ margin:8px 0 6px; font-size:.98rem; }
@@ -112,7 +120,7 @@
   .start-row{ display:flex; gap:14px; align-items:center; flex-wrap:wrap; }
   .btn{
     border:1px solid var(--key-border); background:var(--surface-2); color:var(--text);
-    padding:12px 22px; border-radius:8px; font-size:.95rem; font-weight:600;
+    padding:12px 22px; border-radius:9px; font-size:.95rem; font-weight:600;
     transition:transform .15s ease, border-color .15s ease, background .15s ease;
   }
   .btn:hover{ border-color:var(--accent); transform:translateY(-1px); }
@@ -131,7 +139,7 @@
   /* ============ CUSTOM TEXT PANEL ============ */
   .panel{
     background:var(--surface); border:1px solid var(--key-border); border-radius:var(--radius);
-    padding:18px 20px; margin-top:18px;
+    padding:18px 20px; margin-top:18px; box-shadow:var(--shadow);
   }
   .panel h4{ margin:0 0 10px; font-size:.85rem; text-transform:uppercase; letter-spacing:.08em; color:var(--text-dim); }
   .panel textarea{
@@ -151,7 +159,7 @@
   .stat-bar{
     display:flex; justify-content:space-between; align-items:center;
     background:var(--surface); border:1px solid var(--key-border); border-radius:var(--radius);
-    padding:14px 20px; margin-bottom:22px; flex-wrap:wrap; gap:12px;
+    padding:14px 20px; margin-bottom:22px; flex-wrap:wrap; gap:12px; box-shadow:var(--shadow);
   }
   .stat{ text-align:center; min-width:64px; }
   .stat .v{ font-family:var(--font-display); font-size:1.3rem; font-weight:700; }
@@ -160,10 +168,10 @@
 
   .type-stage{
     background:var(--surface); border:1px solid var(--key-border); border-radius:var(--radius);
-    padding:28px 26px; min-height:220px;
+    padding:30px 28px; min-height:220px; box-shadow:var(--shadow);
   }
   .type-text{
-    font-family:var(--font-type); font-size:1.28rem; line-height:2.35; letter-spacing:.01em;
+    font-family:var(--font-type); font-size:1.28rem; line-height:2.4; letter-spacing:.01em;
   }
   .word{ display:inline-block; white-space:nowrap; }
   .ch{
@@ -172,13 +180,13 @@
   }
   .ch.correct{ background:color-mix(in srgb, var(--correct) 30%, transparent); color:var(--correct); }
   .ch.wrong{ background:var(--wrong); color:var(--wrong-ink); }
-  .ch.skipped{ background:color-mix(in srgb, var(--wrong) 35%, transparent); color:var(--wrong); text-decoration:underline wavy; }
   .ch.current{ box-shadow: inset 0 -3px 0 var(--accent); }
   .ch.current::before{
     content:''; position:absolute; left:-1px; top:0; bottom:0; width:2px; background:var(--accent);
     animation:blink .9s steps(1) infinite;
   }
-  .ch.space{ min-width:.6ch; }
+  .ch.space{ min-width:.7ch; border-bottom:1px dotted color-mix(in srgb, var(--text-dim) 55%, transparent); }
+  .ch.space.correct, .ch.space.wrong{ border-bottom-color:transparent; }
 
   .stage-footer{
     display:flex; justify-content:space-between; align-items:center; margin-top:22px;
@@ -193,26 +201,31 @@
   /* ============ REPORT ============ */
   .report{ padding-top:6px; }
   .report h2{ font-family:var(--font-display); font-size:1.6rem; margin:0 0 4px; }
-  .report .sub{ color:var(--text-dim); margin:0 0 26px; font-size:.92rem; }
+  .report .sub{ color:var(--text-dim); margin:0 0 8px; font-size:.92rem; }
+  .pb-badge{
+    display:inline-flex; align-items:center; gap:6px; font-size:.78rem; font-weight:700;
+    color:var(--accent); margin-bottom:22px;
+  }
   .grid-stats{
     display:grid; grid-template-columns:repeat(auto-fit,minmax(140px,1fr)); gap:12px;
-    margin-bottom:26px;
+    margin-bottom:24px;
   }
   .grid-stats .cell{
     background:var(--surface); border:1px solid var(--key-border); border-radius:var(--radius);
-    padding:16px 18px;
+    padding:16px 18px; box-shadow:var(--shadow);
   }
   .grid-stats .cell .big{ font-family:var(--font-display); font-size:1.7rem; font-weight:700; }
   .grid-stats .cell .lab{ color:var(--text-dim); font-size:.72rem; text-transform:uppercase; letter-spacing:.07em; margin-top:2px;}
+  .grid-stats .cell .sub2{ color:var(--text-dim); font-size:.72rem; margin-top:4px; }
   .bar-row{ margin-bottom:12px; }
   .bar-row .bl{ display:flex; justify-content:space-between; font-size:.78rem; color:var(--text-dim); margin-bottom:5px; }
   .bar-track{ height:8px; border-radius:6px; background:var(--surface-2); overflow:hidden; }
-  .bar-fill{ height:100%; background:var(--accent); border-radius:6px; transition:width .5s ease; }
+  .bar-fill{ height:100%; background:var(--correct); border-radius:6px; transition:width .5s ease; }
   .bar-fill.warn{ background:var(--wrong); }
 
   .challenge-box{
     background:var(--surface); border:1px solid var(--key-border); border-radius:var(--radius);
-    padding:20px 22px; margin-top:22px;
+    padding:20px 22px; margin-top:22px; box-shadow:var(--shadow);
   }
   .challenge-box h4{ margin:0 0 4px; font-size:.95rem; }
   .challenge-box p{ margin:0 0 14px; color:var(--text-dim); font-size:.85rem; }
@@ -227,11 +240,23 @@
   .verdict.success{ display:block; background:color-mix(in srgb, var(--correct) 18%, transparent); color:var(--correct); }
   .verdict.fail{ display:block; background:color-mix(in srgb, var(--wrong) 15%, transparent); color:var(--wrong); }
 
+  /* ============ STORY SCREEN ============ */
+  .story{ max-width:66ch; }
+  .story h2{ font-family:var(--font-display); font-size:1.7rem; margin:10px 0 4px; }
+  .story .byline{ color:var(--text-dim); font-size:.85rem; margin-bottom:26px; }
+  .story p{ line-height:1.75; font-size:1rem; margin:0 0 18px; color:var(--text); }
+  .story .pull{
+    border-left:3px solid var(--accent); padding:4px 0 4px 18px; margin:26px 0;
+    font-family:var(--font-display); font-size:1.05rem; color:var(--accent);
+  }
+  .story .links{ display:flex; gap:12px; flex-wrap:wrap; margin-top:26px; }
+
   footer.foot{
     margin-top:50px; padding-top:20px; border-top:1px solid var(--key-border);
     color:var(--text-dim); font-size:.74rem; display:flex; justify-content:space-between;
     flex-wrap:wrap; gap:8px;
   }
+  footer.foot a{ color:inherit; }
 
   .desktop-only-notice{
     display:none; position:fixed; inset:0; background:var(--bg); z-index:50;
@@ -257,25 +282,28 @@
 
   <header class="topbar">
     <button class="logo" id="logoBtn" title="Back to start">F<span>A</span>ST<small>Finger&nbsp;Accuracy&nbsp;Speed&nbsp;Trainer</small></button>
-    <div class="theme-row" id="themeRow"></div>
+    <div class="nav-right">
+      <button class="nav-link" id="storyNavBtn">The story behind FAST</button>
+      <div class="theme-row" id="themeRow"></div>
+    </div>
   </header>
 
   <!-- ============ SCREEN: HOME ============ -->
   <section id="screen-home">
     <div class="hero">
       <h1>Type with the fingers<br>you actually use<span class="cursor">&nbsp;</span></h1>
-      <p class="lede">Most typing tutors assume ten fingers on home row. FAST is built for the two-to-four-finger method — rewrite short essays, race the clock, and watch your own record fall.</p>
+      <p class="lede">Most typing tutors assume ten fingers on home row. FAST is built for your own method — two, three, or four fingers — rewrite short passages, race the clock, and watch your own record fall.</p>
 
       <div class="method">
         <div class="card">
           <div class="num">01 — HOW IT WORKS</div>
           <h3>Rewrite a passage</h3>
-          <p>Retype the essay below exactly. Correct keys glow, mistakes flare red — fix them or skip past with Tab.</p>
+          <p>Retype the essay below exactly. Correct keys light up green, mistakes flare red — keep going, and fix them later with Backspace if you want.</p>
         </div>
         <div class="card">
           <div class="num">02 — YOUR TIME</div>
           <h3>Get a full report</h3>
-          <p>WPM, accuracy, corrected vs. skipped mistakes — a clean breakdown the moment you finish.</p>
+          <p>WPM, accuracy, mistakes fixed vs. left behind, and how you compare to your own best run.</p>
         </div>
         <div class="card">
           <div class="num">03 — THE CHALLENGE</div>
@@ -316,7 +344,7 @@
       <div class="type-text" id="typeText"></div>
     </div>
     <div class="stage-footer">
-      <div class="hint">Wrong key? <kbd>Backspace</kbd> to fix, <kbd>Tab</kbd> to skip past it.</div>
+      <div class="hint">Mistakes turn red but never stop you — keep typing. Press <kbd>Backspace</kbd> anytime to go back and fix one.</div>
       <button class="btn ghost" id="restartBtn">Restart this text</button>
     </div>
   </section>
@@ -326,21 +354,22 @@
     <div class="report">
       <h2>Session report</h2>
       <p class="sub" id="reportSub">Here's how that pass went.</p>
+      <div class="pb-badge hidden" id="pbBadge"></div>
 
       <div class="grid-stats">
-        <div class="cell"><div class="big" id="repTime">—</div><div class="lab">Total time</div></div>
-        <div class="cell"><div class="big" id="repWpm">—</div><div class="lab">Words per minute</div></div>
-        <div class="cell"><div class="big" id="repAcc">—</div><div class="lab">Clean accuracy</div></div>
+        <div class="cell"><div class="big" id="repTime">—</div><div class="lab">Total time</div><div class="sub2" id="repTimeBest"></div></div>
+        <div class="cell"><div class="big" id="repWpmNet">—</div><div class="lab">Net WPM</div><div class="sub2" id="repWpmGross"></div></div>
+        <div class="cell"><div class="big" id="repAcc">—</div><div class="lab">Final accuracy</div></div>
         <div class="cell"><div class="big" id="repRaw">—</div><div class="lab">Raw keystroke accuracy</div></div>
       </div>
 
       <div class="bar-row">
-        <div class="bl"><span>Corrected mistakes</span><span id="repCorrected">0</span></div>
+        <div class="bl"><span>Mistakes you fixed</span><span id="repCorrected">0</span></div>
         <div class="bar-track"><div class="bar-fill" id="barCorrected" style="width:0%"></div></div>
       </div>
       <div class="bar-row">
-        <div class="bl"><span>Skipped (uncorrected) characters</span><span id="repSkipped">0</span></div>
-        <div class="bar-track"><div class="bar-fill warn" id="barSkipped" style="width:0%"></div></div>
+        <div class="bl"><span>Mistakes still on the page</span><span id="repRemaining">0</span></div>
+        <div class="bar-track"><div class="bar-fill warn" id="barRemaining" style="width:0%"></div></div>
       </div>
 
       <div class="challenge-box">
@@ -363,8 +392,38 @@
     </div>
   </section>
 
+  <!-- ============ SCREEN: STORY ============ -->
+  <section id="screen-story" class="hidden">
+    <div class="story">
+      <h2>Why I built FAST</h2>
+      <p class="byline">Mohamed “Cheikh” — <a href="https://github.com/mohamed005cheikh-rgb" target="_blank" rel="noopener" style="color:var(--accent);">github.com/mohamed005cheikh-rgb</a></p>
+
+      <p>I got my first laptop later than most people do. Long before that, my hands had already found their own rhythm on a phone keyboard — fast, sure, comfortable. My hands aren't unusually small. They're just normal hands, not the flexible, made-for-typing hands the tutorials seem to assume everyone has. So when I finally sat down in front of a real keyboard, none of the standard advice worked for me. Home row, ten fingers, muscle memory built for a stretch my hands don't make naturally — I tried it, again and again, and it never clicked.</p>
+
+      <p>I went looking for a fix. YouTube tutorials, forums, typing apps, one after another. I never found anything built for someone like me. So I started building my own way around the problem. First came <strong>RMC88</strong>, a project on my GitHub — a remote control that lets me run my laptop from my phone, offline, with a bunch of features I'd wanted for different reasons. But underneath all of it, the real reason I built it was simple: I wanted to keep typing the way my hands already knew — on a phone keyboard — just sending it wirelessly to a laptop screen.</p>
+
+      <p>It worked. But it was a workaround, not an answer. I was still dodging the real problem instead of solving it.</p>
+
+      <div class="pull">So I stopped dodging.</div>
+
+      <p>I looked at my own hands and asked what they could actually do well. The answer: four fingers. Two from my right hand, covering the right side of the keyboard. Two from my left, covering the left side. It isn't the fastest method in the world — but it's mine, and it's real, and it works.</p>
+
+      <p>That's why FAST exists. Not to force everyone into the same ten-finger mold, but to let you practice the way that actually fits your hands — however many fingers that takes. Rewrite a passage, watch your mistakes in red, watch your progress in green, and race your own clock until your own style becomes fast.</p>
+
+      <p>This is how I solved my problem — temporarily, maybe for good. I hope so. Arabic is my first language, and I also speak French; English is the one I'm still working on, so if a sentence anywhere on this site reads a little rough, that's why. If you've got ideas, feedback, or the same problem I had, I'd genuinely love to hear from you. Who knows — maybe one day this becomes something everyone reaches for.</p>
+
+      <p>Thank you for typing with me.<br>— Mohamed (Cheikh)</p>
+
+      <div class="links">
+        <a class="btn ghost" href="https://github.com/mohamed005cheikh-rgb" target="_blank" rel="noopener">GitHub — mohamed005cheikh-rgb</a>
+        <a class="btn ghost" href="https://wa.me/22230726475" target="_blank" rel="noopener">WhatsApp — +222 30 72 64 75</a>
+        <a class="btn ghost" href="mailto:mohamed005cheikh@gmail.com">mohamed005cheikh@gmail.com</a>
+      </div>
+    </div>
+  </section>
+
   <footer class="foot">
-    <span>© mohamed005cheikh@gmail.com — by MC88</span>
+    <span>© Mohamed Cheikh — <a href="mailto:mohamed005cheikh@gmail.com">mohamed005cheikh@gmail.com</a> — by MC88</span>
     <span id="footStatus">Local session — nothing is uploaded</span>
   </footer>
 </div>
@@ -378,13 +437,12 @@
 
   /* ---------- STATE ---------- */
   let currentText = "";
-  let chars = [];        // {ch, status}
+  let chars = [];        // {ch, status:'pending'|'correct'|'wrong', everWrong:boolean}
   let curIndex = 0;
   let startTime = null;
   let endTime = null;
   let timerHandle = null;
-  let totalMistakes = 0;     // every wrong keystroke, even if later fixed
-  let skippedCount = 0;      // chars forced past with Tab
+  let totalKeystrokeErrors = 0;  // every wrong keystroke event, including retries
   let lastSessionTime = null;
   let targetSeconds = null;
 
@@ -392,11 +450,11 @@
 
   /* ---------- THEME ---------- */
   const THEMES = [
-    {id:'graphite', label:'Graphite', bg:'#14161a'},
-    {id:'paper',    label:'Paper',    bg:'#eef2ee'},
-    {id:'midnight', label:'Midnight', bg:'#0c1220'},
-    {id:'forest',   label:'Forest',   bg:'#0f1610'},
-    {id:'amber',    label:'Amber',    bg:'#1a140f'}
+    {id:'graphite', label:'Graphite', bg:'#12141a'},
+    {id:'paper',    label:'Paper',    bg:'#eef1ee'},
+    {id:'midnight', label:'Midnight', bg:'#0b101c'},
+    {id:'forest',   label:'Forest',   bg:'#0e1510'},
+    {id:'ember',    label:'Ember',    bg:'#180f0c'}
   ];
   function buildThemeRow(){
     const row = $('themeRow');
@@ -435,7 +493,7 @@
   function renderSavedTexts(){
     const wrap = $('savedTexts');
     wrap.innerHTML = '';
-    getSavedTexts().forEach((t,i)=>{
+    getSavedTexts().forEach((t)=>{
       const chip = document.createElement('button');
       chip.className = 'chip';
       chip.textContent = (t.slice(0,28) + (t.length>28?'…':''));
@@ -446,13 +504,14 @@
 
   /* ---------- SCREEN SWITCHING ---------- */
   function show(id){
-    ['screen-home','screen-practice','screen-report'].forEach(s=>{
+    ['screen-home','screen-practice','screen-report','screen-story'].forEach(s=>{
       $(s).classList.toggle('hidden', s!==id);
     });
   }
 
   $('logoBtn').addEventListener('click', ()=> show('screen-home'));
   $('backHomeBtn').addEventListener('click', ()=> show('screen-home'));
+  $('storyNavBtn').addEventListener('click', ()=> show('screen-story'));
 
   $('useOwnBtn').addEventListener('click', ()=>{
     $('ownTextPanel').classList.toggle('hidden');
@@ -477,10 +536,10 @@
   function beginPractice(text, target){
     currentText = text;
     targetSeconds = target || null;
-    chars = [...text].map(ch=>({ch, status:'pending'}));
+    chars = [...text].map(ch=>({ch, status:'pending', everWrong:false}));
     curIndex = 0;
     startTime = null; endTime = null;
-    totalMistakes = 0; skippedCount = 0;
+    totalKeystrokeErrors = 0;
     clearInterval(timerHandle);
 
     renderTypeText();
@@ -501,7 +560,7 @@
       const span = document.createElement('span');
       span.className = 'ch';
       span.dataset.i = i;
-      span.textContent = c.ch === ' ' ? '\u00B7' : c.ch;
+      span.textContent = c.ch === ' ' ? '\u00A0' : c.ch;
       if(c.ch === ' '){
         span.classList.add('space');
         stage.appendChild(span);
@@ -520,11 +579,10 @@
   function paintAll(){
     const spans = document.querySelectorAll('#typeText .ch');
     spans.forEach((el,i)=>{
-      el.classList.remove('correct','wrong','skipped','current');
+      el.classList.remove('correct','wrong','current');
       const st = chars[i].status;
       if(st==='correct') el.classList.add('correct');
       else if(st==='wrong') el.classList.add('wrong');
-      else if(st==='skipped') el.classList.add('skipped');
       if(i===curIndex) el.classList.add('current');
     });
     const cur = document.querySelector('#typeText .ch.current');
@@ -533,6 +591,7 @@
 
   function onKeyDown(e){
     if(curIndex >= chars.length) return;
+
     if(e.key === 'Backspace'){
       e.preventDefault();
       if(curIndex > 0){
@@ -542,27 +601,20 @@
       }
       return;
     }
-    if(e.key === 'Tab'){
-      e.preventDefault();
-      if(startTime===null) startTimer();
-      chars[curIndex].status = 'skipped';
-      skippedCount++;
-      curIndex++;
-      afterAdvance();
-      return;
-    }
-    if(e.key.length !== 1) return; // ignore Shift, Ctrl, arrows, etc.
+    if(e.key.length !== 1) return; // ignore Shift, Ctrl, arrows, Tab, etc.
     e.preventDefault();
     if(startTime===null) startTimer();
 
     const expected = chars[curIndex].ch;
     if(e.key === expected){
       chars[curIndex].status = 'correct';
-      curIndex++;
     } else {
       chars[curIndex].status = 'wrong';
-      totalMistakes++;
+      chars[curIndex].everWrong = true;
+      totalKeystrokeErrors++;
     }
+    // typing always moves forward — mistakes never block you
+    curIndex++;
     afterAdvance();
   }
 
@@ -582,13 +634,28 @@
   function updateStats(){
     const elapsed = startTime ? (performance.now()-startTime)/1000 : 0;
     $('statTime').textContent = elapsed.toFixed(1)+'s';
+    const typedCount = chars.filter(c=>c.status!=='pending').length;
     const correctCount = chars.filter(c=>c.status==='correct').length;
-    const wpm = elapsed>0 ? Math.round((correctCount/5)/(elapsed/60)) : 0;
+    const wpm = elapsed>0 ? Math.round((typedCount/5)/(elapsed/60)) : 0;
     $('statWpm').textContent = wpm;
-    const attempts = correctCount + totalMistakes;
-    const acc = attempts>0 ? Math.round((correctCount/attempts)*100) : 100;
+    const acc = typedCount>0 ? Math.round((correctCount/typedCount)*100) : 100;
     $('statAcc').textContent = acc+'%';
-    $('statErr').textContent = totalMistakes;
+    $('statErr').textContent = totalKeystrokeErrors;
+  }
+
+  /* ---------- PERSONAL BEST ---------- */
+  function hashText(t){
+    return t.length + '_' + t.slice(0,20).replace(/\s+/g,'_');
+  }
+  function getBests(){
+    try{ return JSON.parse(localStorage.getItem('fast_best')||'{}'); }catch(e){ return {}; }
+  }
+  function saveBestIfNeeded(key, time, wpm, acc){
+    const bests = getBests();
+    const prev = bests[key];
+    const isNew = !prev || time < prev.time;
+    if(isNew){ bests[key] = {time, wpm, acc, date:Date.now()}; localStorage.setItem('fast_best', JSON.stringify(bests)); }
+    return {isNew, prev};
   }
 
   function finishSession(){
@@ -599,24 +666,44 @@
     lastSessionTime = elapsed;
 
     const totalChars = chars.length;
-    const correctFinal = chars.filter(c=>c.status==='correct').length;
-    const correctedMistakes = Math.max(0, totalMistakes - skippedCount);
-    const cleanAcc = Math.round((correctFinal/totalChars)*100);
-    const rawAttempts = correctFinal + totalMistakes;
-    const rawAcc = rawAttempts>0 ? Math.round((correctFinal/rawAttempts)*100) : 100;
-    const wpm = Math.round((totalChars/5)/(elapsed/60));
+    const finalCorrect = chars.filter(c=>c.status==='correct').length;
+    const finalWrong = chars.filter(c=>c.status==='wrong').length;
+    const correctedCount = chars.filter(c=>c.everWrong && c.status==='correct').length;
+
+    const cleanAcc = Math.round((finalCorrect/totalChars)*100);
+    const rawAttempts = finalCorrect + totalKeystrokeErrors;
+    const rawAcc = rawAttempts>0 ? Math.round((finalCorrect/rawAttempts)*100) : 100;
+
+    const minutes = elapsed/60;
+    const grossWpm = Math.round((totalChars/5)/minutes);
+    const netWpm = Math.max(0, Math.round(grossWpm - (finalWrong/minutes)));
 
     $('reportSub').textContent = targetSeconds
       ? `Goal was ${targetSeconds.toFixed(0)}s — you finished in ${elapsed.toFixed(1)}s.`
       : `You finished ${totalChars} characters in ${elapsed.toFixed(1)}s.`;
+
     $('repTime').textContent = elapsed.toFixed(1)+'s';
-    $('repWpm').textContent = wpm;
+    $('repWpmNet').textContent = netWpm;
+    $('repWpmGross').textContent = `${grossWpm} gross WPM`;
     $('repAcc').textContent = cleanAcc+'%';
     $('repRaw').textContent = rawAcc+'%';
-    $('repCorrected').textContent = correctedMistakes;
-    $('repSkipped').textContent = skippedCount;
-    $('barCorrected').style.width = Math.min(100,(correctedMistakes/Math.max(1,totalChars))*400)+'%';
-    $('barSkipped').style.width = Math.min(100,(skippedCount/Math.max(1,totalChars))*400)+'%';
+    $('repCorrected').textContent = correctedCount;
+    $('repRemaining').textContent = finalWrong;
+    $('barCorrected').style.width = Math.min(100,(correctedCount/Math.max(1,totalChars))*400)+'%';
+    $('barRemaining').style.width = Math.min(100,(finalWrong/Math.max(1,totalChars))*400)+'%';
+
+    // personal best
+    const key = hashText(currentText);
+    const {isNew, prev} = saveBestIfNeeded(key, elapsed, grossWpm, cleanAcc);
+    const pb = $('pbBadge');
+    if(isNew){
+      pb.classList.remove('hidden');
+      pb.textContent = prev ? `★ New personal best on this text — beat ${prev.time.toFixed(1)}s` : '★ First run recorded on this text';
+      $('repTimeBest').textContent = '';
+    } else {
+      pb.classList.add('hidden');
+      $('repTimeBest').textContent = `best: ${prev.time.toFixed(1)}s`;
+    }
 
     const verdict = $('verdictBox');
     verdict.className = 'verdict';
@@ -632,7 +719,7 @@
       verdict.textContent = '';
     }
 
-    saveHistory({time:elapsed, wpm, acc:cleanAcc, textLen:totalChars, date:Date.now()});
+    saveHistory({time:elapsed, wpm:grossWpm, acc:cleanAcc, textLen:totalChars, date:Date.now()});
     show('screen-report');
   }
 
