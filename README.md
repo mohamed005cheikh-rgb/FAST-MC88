@@ -21,7 +21,7 @@ Just you, a piece of text, and a timer that's honest with you.
 The full story of why I built this is written into the site itself — open it and look for *"The story behind FAST"* in the top navigation.
 
 ---
-
+<!-- 
 ## 📸 Look Inside
 
 <div align="center">
@@ -47,7 +47,7 @@ The full story of why I built this is written into the site itself — open it a
 </div>
 
 ---
-
+-->
 ## ✨ What you'll find
 
 **Real text to rewrite, not random letters.**  
